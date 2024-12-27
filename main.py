@@ -136,8 +136,8 @@ def capture_and_process_screenshot():
         player = [mons_list[1]]
 
     else:
-        opponent = mons_list
-        player = []
+        opponent = []
+        player = mons_list
 
     os.system('cls' if os.name == 'nt' else 'clear')
     print("Opponent: ")
