@@ -3,7 +3,6 @@ import pyautogui
 import keyboard
 import easyocr
 import numpy as np
-import cv2
 import json
 import os
 from collections import defaultdict
