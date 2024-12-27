@@ -4,6 +4,7 @@ import easyocr
 import numpy as np
 import cv2
 import json
+from collections import defaultdict
 
 reader = easyocr.Reader(['en'], gpu=True)
 
@@ -45,15 +46,60 @@ def capture_and_process_screenshot():
                 mons[mon] = pokemon[mon]
                 break
     
-    for mon in mons:
-        print("Detected Pokémon:", mon)
-        print("Type effectiveness:")
-        types = pokemon[mon]
-        effectiveness = calculate_type_effectiveness(types)
-        print(effectiveness)
+    mons_list = list(mons.keys())
+    if len(mons_list) == 4:
+        opponent = mons_list[:2]
+        player = mons_list[2:]
+
+    elif len(mons_list) == 2:
+        opponent = [mons_list[0]]
+        player = [mons_list[1]]
+
+    else:
+        opponent = mons_list
+        player = []
+
+    print("Opponent: ")
+    for mon in opponent:
+        print()
+        print(mon.title())
+        effectiveness = calculate_type_effectiveness(mons[mon])
+        effectiveness = {
+            k: round(v / 100, 2) 
+            for k, v in sorted(effectiveness.items(), key=lambda item: item[1], reverse=True)
+        }        
+        swapped = defaultdict(list)
+
+        for key, value in effectiveness.items():
+            swapped[value].append(key)
+
+        effectiveness = dict(swapped)
+        for effective in effectiveness:
+            print(f"{int(effective) if str(effective).endswith('.0') else effective}x: {', '.join(effectiveness[effective])}")
+
+    print()
+    print("Player: ")
+
+    for mon in player:
+        print()
+        print(mon.title())
+        effectiveness = calculate_type_effectiveness(mons[mon])
+        effectiveness = {
+            k: round(v / 100, 2) 
+            for k, v in sorted(effectiveness.items(), key=lambda item: item[1], reverse=True)
+        }        
+        swapped = defaultdict(list)
+
+        for key, value in effectiveness.items():
+            swapped[value].append(key)
+
+        effectiveness = dict(swapped)
+        for effective in effectiveness:
+            print(f"{int(effective) if str(effective).endswith('.0') else effective}x: {', '.join(effectiveness[effective])}")
+
     print("Press 'q' to capture another screenshot, or 'esc' to exit.")
 
-def calculate_type_effectiveness(pokemon_types, type_damage_relations_map):
+def calculate_type_effectiveness(pokemon_types):
     effectiveness = {}
 
     for defensive_type in pokemon_types:
