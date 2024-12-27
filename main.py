@@ -62,11 +62,11 @@ def capture_and_process_screenshot():
     print("Opponent: ")
     for mon in opponent:
         print()
-        print(mon.title())
+        print(f"{mon.title()} ({', '.join(mons[mon].title())})")
         effectiveness = calculate_type_effectiveness(mons[mon])
         effectiveness = {
             k: round(v / 100, 2) 
-            for k, v in sorted(effectiveness.items(), key=lambda item: item[1], reverse=True)
+            for k, v in sorted(effectiveness.items(), key=lambda item: item[1], reverse=False)
         }        
         swapped = defaultdict(list)
 
@@ -82,11 +82,11 @@ def capture_and_process_screenshot():
 
     for mon in player:
         print()
-        print(mon.title())
+        print(f"{mon.title()} ({', '.join(mons[mon].title())})")
         effectiveness = calculate_type_effectiveness(mons[mon])
         effectiveness = {
             k: round(v / 100, 2) 
-            for k, v in sorted(effectiveness.items(), key=lambda item: item[1], reverse=True)
+            for k, v in sorted(effectiveness.items(), key=lambda item: item[1], reverse=False)
         }        
         swapped = defaultdict(list)
 
