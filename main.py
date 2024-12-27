@@ -38,7 +38,7 @@ type_colors = {
 }
 RESET_COLOR = "\033[0m"
 
-print("Press 'q' to capture a screenshot and perform OCR. Press 'esc' to exit.")
+print("Press 'q' to Begin...")
 
 def color_text(text, color_code):
     return f"{color_code}{text}{RESET_COLOR}"
@@ -158,12 +158,6 @@ def capture_and_process_screenshot():
 def on_q_release(_):
     capture_and_process_screenshot()
 
-def on_esc_release(_):
-    print("Exiting...")
-    keyboard.unhook_all()
-    exit()
-
 keyboard.on_release_key('q', on_q_release)
-keyboard.on_release_key('esc', on_esc_release)
 
 keyboard.wait()
