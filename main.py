@@ -84,6 +84,8 @@ def print_pokemon_info(mon_name, mon_types):
         swapped[value].append(key)
 
     effectiveness = dict(swapped)
+    if 1 in effectiveness:
+        del effectiveness[1]
     for effective in effectiveness:
         types_effective_colored = [color_text(t.title(), type_colors.get(t.lower(), "")) for t in effectiveness[effective]]
 
@@ -91,7 +93,6 @@ def print_pokemon_info(mon_name, mon_types):
             0: "\033[97m",
             0.25: "\033[91m",
             0.5: "\033[31m",
-            1: "\033[97m",
             2: "\033[32m",
             4: "\033[92m",
         }
@@ -114,7 +115,7 @@ def capture_and_process_screenshot():
 
         screenshot = pyautogui.screenshot(region=(left, top, width, height))
         screenshot_np = np.array(screenshot)
-        screenshot_np = cv2.GaussianBlur(screenshot_np, (5, 5), 0)
+        screenshot_np = cv2.GaussianBlur(screenshot_np, (3, 3), 0)
         results = reader.readtext(screenshot_np)
 
         words = []
@@ -124,6 +125,7 @@ def capture_and_process_screenshot():
             words.append(text.replace(' ', '').lower())
 
         mons = {}
+        
         for mon in pokemon:
             for i, word in enumerate(words):
                 if mon[:8] in word:
@@ -170,5 +172,5 @@ def capture_and_process_screenshot():
 def on_q_release(_):
     capture_and_process_screenshot()
 
-keyboard.on_release_key('ctrl', on_q_release)
+keyboard.on_release_key('q', on_q_release)
 keyboard.wait()
