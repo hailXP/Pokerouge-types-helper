@@ -125,24 +125,25 @@ def capture_and_process_screenshot():
         mons = {}
         for mon in pokemon:
             for i, word in enumerate(words):
-                if mon in word:
+                if mon[:8] in word:
                     mons[mon] = [pokemon[mon], i]
                     break
         
         mons = {mon: mons[mon][0] for mon in sorted(mons, key=lambda x: mons[x][1])}
         mons_list = list(mons.keys())
 
-        if len(mons_list) == 4:
-            opponent = mons_list[:2]
-            player = mons_list[2:]
-
-        elif len(mons_list) == 2:
+        if len(mons_list) == 2:
             opponent = [mons_list[0]]
             player = [mons_list[1]]
-
+        
         elif len(mons_list) == 3:
             opponent = [mons_list[0]]
             player = mons_list[1:]
+            
+        elif len(mons_list) == 4:
+            opponent = mons_list[:2]
+            player = mons_list[2:]
+
         else:
             opponent = []
             player = mons_list
