@@ -111,7 +111,6 @@ def capture_and_process_screenshot():
 
     screenshot = pyautogui.screenshot(region=region)
     screenshot_np = np.array(screenshot)
-    screenshot_np = cv2.GaussianBlur(screenshot_np, (5, 5), 0)
     results = reader.readtext(screenshot_np)
 
     words = []
