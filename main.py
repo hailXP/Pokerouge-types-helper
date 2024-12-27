@@ -1,5 +1,6 @@
-import keyboard
+import pygetwindow as gw
 import pyautogui
+import keyboard
 import easyocr
 import numpy as np
 import cv2
@@ -100,60 +101,72 @@ def print_pokemon_info(mon_name, mon_types):
         print(f"{effective_colored}: {', '.join(types_effective_colored)}")
 
 def capture_and_process_screenshot():
-    screen_width, screen_height = pyautogui.size()
+    window_name = "pokérogue"
 
-    region = [
-        0,
-        int(0.05 * screen_width),
-        int(0.75 * screen_width),
-        int(0.65 * screen_height)
-    ]
+    window = None
+    for win in gw.getWindowsWithTitle(window_name):
+        if window_name.lower() in win.title.lower():
+            window = win
+            break
 
-    screenshot = pyautogui.screenshot(region=region)
-    screenshot_np = np.array(screenshot)
-    results = reader.readtext(screenshot_np)
+    if window:
+        left, top, width, height = window.left, window.top, window.width, window.height
 
-    words = []
-    for (_, text, _) in results:
-        if len(text) < 3:
-            continue
-        words.append(text.replace(' ', '').lower())
+        screenshot = pyautogui.screenshot(region=(left, top, width, height))
+        screenshot_np = np.array(screenshot)
+        results = reader.readtext(screenshot_np)
 
-    mons = {}
-    for mon in pokemon:
-        for word in words:
-            if mon in word:
-                mons[mon] = pokemon[mon]
-                break
+        words = []
+        for (_, text, _) in results:
+            if len(text) < 3:
+                continue
+            words.append(text.replace(' ', '').lower())
 
-    mons_list = list(mons.keys())
-    if len(mons_list) == 4:
-        opponent = mons_list[:2]
-        player = mons_list[2:]
+        mons = {}
+        for mon in pokemon:
+            for i, word in enumerate(words):
+                if mon in word:
+                    mons[mon] = [pokemon[mon], i]
+                    break
+        
+        mons = {mon: mons[mon][0] for mon in sorted(mons, key=lambda x: mons[x][1])}
+        mons_list = list(mons.keys())
 
-    elif len(mons_list) == 2:
-        opponent = [mons_list[0]]
-        player = [mons_list[1]]
+        if len(mons_list) == 4:
+            opponent = mons_list[:2]
+            player = mons_list[2:]
 
+        elif len(mons_list) == 2:
+            opponent = [mons_list[0]]
+            player = [mons_list[1]]
+
+        elif len(mons_list) == 3:
+            opponent = [mons_list[0]]
+            player = mons_list[1:]
+        else:
+            opponent = []
+            player = mons_list
+
+        os.system('cls' if os.name == 'nt' else 'clear')
+        print(words)
+        print(mons)
+        print(mons_list)
+        print("Opponent: ")
+        for mon in opponent:
+            print()
+            print_pokemon_info(mon, mons[mon])
+
+        print()
+        print("Player: ")
+
+        for mon in player:
+            print()
+            print_pokemon_info(mon, mons[mon])
+
+        print()
+        print("======================================")
     else:
-        opponent = []
-        player = mons_list
-
-    os.system('cls' if os.name == 'nt' else 'clear')
-    print("Opponent: ")
-    for mon in opponent:
-        print()
-        print_pokemon_info(mon, mons[mon])
-
-    print()
-    print("Player: ")
-
-    for mon in player:
-        print()
-        print_pokemon_info(mon, mons[mon])
-
-    print()
-    print("======================================")
+        print(f"Window '{window_name}' not found.")
 
 def on_q_release(_):
     capture_and_process_screenshot()
