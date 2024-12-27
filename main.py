@@ -169,6 +169,5 @@ def capture_and_process_screenshot():
 def on_q_release(_):
     capture_and_process_screenshot()
 
-keyboard.on_release_key('q', on_q_release)
-
+keyboard.on_release_key('ctrl', on_q_release)
 keyboard.wait()
