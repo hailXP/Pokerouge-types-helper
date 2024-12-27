@@ -53,27 +53,29 @@ def capture_and_process_screenshot():
         print(effectiveness)
     print("Press 'q' to capture another screenshot, or 'esc' to exit.")
 
-def calculate_type_effectiveness(pokemon_types):
+def calculate_type_effectiveness(pokemon_types, type_damage_relations_map):
     effectiveness = {}
-
-    def add_multiplier(type_name, multiplier):
-        old_value = effectiveness.get(type_name, 100)
-        new_value = old_value * multiplier
-        effectiveness[type_name] = new_value
 
     for defensive_type in pokemon_types:
         relations = type_damage_relations_map.get(defensive_type, {})
 
         for atk_type in relations.get("double_damage_from", []):
-            add_multiplier(atk_type, 2)
+            old_value = effectiveness.get(atk_type, 100)
+            new_value = old_value * 2
+            effectiveness[atk_type] = new_value
 
         for atk_type in relations.get("no_damage_from", []):
-            add_multiplier(atk_type, 0)
+            old_value = effectiveness.get(atk_type, 100)
+            new_value = old_value * 0
+            effectiveness[atk_type] = new_value
 
         for atk_type in relations.get("half_damage_from", []):
-            add_multiplier(atk_type, 0.5)
+            old_value = effectiveness.get(atk_type, 100)
+            new_value = old_value * 0.5
+            effectiveness[atk_type] = new_value
 
     return effectiveness
+
 
 def on_q_release(_):
     capture_and_process_screenshot()
