@@ -42,8 +42,64 @@ print("Press 'q' to capture a screenshot and perform OCR. Press 'esc' to exit.")
 def color_text(text, color_code):
     return f"{color_code}{text}{RESET_COLOR}"
 
+def calculate_type_effectiveness(pokemon_types):
+    effectiveness = {}
+
+    for defensive_type in pokemon_types:
+        relations = type_damage_relations_map.get(defensive_type.lower(), {})
+
+        for atk_type in relations.get("double_damage_from", []):
+            old_value = effectiveness.get(atk_type, 100)
+            new_value = old_value * 2
+            effectiveness[atk_type] = new_value
+
+        for atk_type in relations.get("no_damage_from", []):
+            old_value = effectiveness.get(atk_type, 100)
+            new_value = old_value * 0
+            effectiveness[atk_type] = new_value
+
+        for atk_type in relations.get("half_damage_from", []):
+            old_value = effectiveness.get(atk_type, 100)
+            new_value = old_value * 0.5
+            effectiveness[atk_type] = new_value
+
+    return effectiveness
+
+def print_pokemon_info(mon_name, mon_types):
+    print()
+    first_type = mon_types[0].lower()
+    mon_colored = color_text(mon_name.title(), type_colors.get(first_type, ""))
+    types_colored = [color_text(t.title(), type_colors.get(t.lower(), "")) for t in mon_types]
+    print(f"{mon_colored} ({', '.join(types_colored)})")
+
+    effectiveness = calculate_type_effectiveness(mon_types)
+    effectiveness = {
+        k: round(v / 100, 2)
+        for k, v in sorted(effectiveness.items(), key=lambda item: item[1], reverse=False)
+    }
+    swapped = defaultdict(list)
+
+    for key, value in effectiveness.items():
+        swapped[value].append(key)
+
+    effectiveness = dict(swapped)
+    for effective in effectiveness:
+        types_effective_colored = [color_text(t.title(), type_colors.get(t.lower(), "")) for t in effectiveness[effective]]
+
+        effectiveness_colors = {
+            0: "\033[30m",
+            0.25: "\033[91m",
+            0.5: "\033[31m",
+            1: "\033[97m",
+            2: "\033[32m",
+            4: "\033[92m",
+        }
+        effective_color_code = effectiveness_colors.get(effective, "")
+        effective_colored = color_text(f"{int(effective) if str(effective).endswith('.0') else effective}x", effective_color_code)
+
+        print(f"{effective_colored}: {', '.join(types_effective_colored)}")
+
 def capture_and_process_screenshot():
-    print("Capturing screenshot...")
     screen_width, screen_height = pyautogui.size()
 
     region = [
@@ -88,99 +144,14 @@ def capture_and_process_screenshot():
     print("Opponent: ")
     for mon in opponent:
         print()
-        first_type = mons[mon][0].lower()
-        mon_colored = color_text(mon.title(), type_colors.get(first_type, ""))
-        types_colored = [color_text(t.title(), type_colors.get(t.lower(), "")) for t in mons[mon]]
-        print(f"{mon_colored} ({', '.join(types_colored)})")
-
-        effectiveness = calculate_type_effectiveness(mons[mon])
-        effectiveness = {
-            k: round(v / 100, 2)
-            for k, v in sorted(effectiveness.items(), key=lambda item: item[1], reverse=False)
-        }
-        swapped = defaultdict(list)
-
-        for key, value in effectiveness.items():
-            swapped[value].append(key)
-
-        effectiveness = dict(swapped)
-        for effective in effectiveness:
-            types_effective_colored = [color_text(t.title(), type_colors.get(t.lower(), "")) for t in effectiveness[effective]]
-
-            effectiveness_colors = {
-                0: "\033[30m",
-                0.25: "\033[91m",
-                0.5: "\033[31m",
-                1: "\033[97m",
-                2: "\033[32m",
-                4: "\033[92m",
-            }
-            effective_color_code = effectiveness_colors.get(effective, "")
-            effective_colored = color_text(f"{int(effective) if str(effective).endswith('.0') else effective}x", effective_color_code)
-
-            print(f"{effective_colored}: {', '.join(types_effective_colored)}")
+        print_pokemon_info(mon, mons[mon])
 
     print()
     print("Player: ")
 
     for mon in player:
         print()
-        first_type = mons[mon][0].lower()
-        mon_colored = color_text(mon.title(), type_colors.get(first_type, ""))
-        types_colored = [color_text(t.title(), type_colors.get(t.lower(), "")) for t in mons[mon]]
-        print(f"{mon_colored} ({', '.join(types_colored)})")
-
-        effectiveness = calculate_type_effectiveness(mons[mon])
-        effectiveness = {
-            k: round(v / 100, 2)
-            for k, v in sorted(effectiveness.items(), key=lambda item: item[1], reverse=False)
-        }
-        swapped = defaultdict(list)
-
-        for key, value in effectiveness.items():
-            swapped[value].append(key)
-
-        effectiveness = dict(swapped)
-        for effective in effectiveness:
-            types_effective_colored = [color_text(t.title(), type_colors.get(t.lower(), "")) for t in effectiveness[effective]]
-
-            effectiveness_colors = {
-                0: "\033[97m",
-                0.25: "\033[91m",
-                0.5: "\033[31m",
-                1: "\033[97m",
-                2: "\033[32m",
-                4: "\033[92m",
-            }
-            effective_color_code = effectiveness_colors.get(effective, "")
-            effective_colored = color_text(f"{int(effective) if str(effective).endswith('.0') else effective}x", effective_color_code)
-
-            print(f"{effective_colored}: {', '.join(types_effective_colored)}")
-
-    print("Press 'q' to capture another screenshot, or 'esc' to exit.")
-
-def calculate_type_effectiveness(pokemon_types):
-    effectiveness = {}
-
-    for defensive_type in pokemon_types:
-        relations = type_damage_relations_map.get(defensive_type.lower(), {})
-
-        for atk_type in relations.get("double_damage_from", []):
-            old_value = effectiveness.get(atk_type, 100)
-            new_value = old_value * 2
-            effectiveness[atk_type] = new_value
-
-        for atk_type in relations.get("no_damage_from", []):
-            old_value = effectiveness.get(atk_type, 100)
-            new_value = old_value * 0
-            effectiveness[atk_type] = new_value
-
-        for atk_type in relations.get("half_damage_from", []):
-            old_value = effectiveness.get(atk_type, 100)
-            new_value = old_value * 0.5
-            effectiveness[atk_type] = new_value
-
-    return effectiveness
+        print_pokemon_info(mon, mons[mon])
 
 def on_q_release(_):
     capture_and_process_screenshot()
