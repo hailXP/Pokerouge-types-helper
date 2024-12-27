@@ -4,6 +4,7 @@ import easyocr
 import numpy as np
 import cv2
 import json
+import os
 from collections import defaultdict
 
 reader = easyocr.Reader(['en'], gpu=True)
@@ -109,7 +110,6 @@ def capture_and_process_screenshot():
     ]
 
     screenshot = pyautogui.screenshot(region=region)
-    screenshot.save("xx.png")
     screenshot_np = np.array(screenshot)
     screenshot_np = cv2.GaussianBlur(screenshot_np, (5, 5), 0)
     results = reader.readtext(screenshot_np)
@@ -140,6 +140,7 @@ def capture_and_process_screenshot():
         opponent = mons_list
         player = []
 
+    os.system('cls' if os.name == 'nt' else 'clear')
     print("Opponent: ")
     for mon in opponent:
         print()
@@ -151,6 +152,9 @@ def capture_and_process_screenshot():
     for mon in player:
         print()
         print_pokemon_info(mon, mons[mon])
+
+    print()
+    print("======================================")
 
 def on_q_release(_):
     capture_and_process_screenshot()
