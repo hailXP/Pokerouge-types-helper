@@ -17,9 +17,9 @@ class ScreenOverlay(QWidget):
         
         self.setGeometry(0, 0, self.screen_width, self.screen_height)
         
-        self.top    = int(0.10 * self.screen_height)
+        self.top    = int(0.15 * self.screen_height)
         self.left   = 0
-        self.right  = int(0.70 * self.screen_width)
+        self.right  = int(0.75 * self.screen_width)
         self.bottom = int(0.65 * self.screen_height)
         
         self.show()
