@@ -66,7 +66,6 @@ def calculate_type_effectiveness(pokemon_types):
     return effectiveness
 
 def print_pokemon_info(mon_name, mon_types):
-    print()
     first_type = mon_types[0].lower()
     mon_colored = color_text(mon_name.title(), type_colors.get(first_type, ""))
     types_colored = [color_text(t.title(), type_colors.get(t.lower(), "")) for t in mon_types]
@@ -87,7 +86,7 @@ def print_pokemon_info(mon_name, mon_types):
         types_effective_colored = [color_text(t.title(), type_colors.get(t.lower(), "")) for t in effectiveness[effective]]
 
         effectiveness_colors = {
-            0: "\033[30m",
+            0: "\033[97m",
             0.25: "\033[91m",
             0.5: "\033[31m",
             1: "\033[97m",
