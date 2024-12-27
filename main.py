@@ -148,9 +148,6 @@ def capture_and_process_screenshot():
             player = mons_list
 
         os.system('cls' if os.name == 'nt' else 'clear')
-        print(words)
-        print(mons)
-        print(mons_list)
         print("Opponent: ")
         for mon in opponent:
             print()
