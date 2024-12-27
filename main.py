@@ -45,7 +45,12 @@ def capture_and_process_screenshot():
                 mons[mon] = pokemon[mon]
                 break
     
-    print("Detected Pokémon:", mons)
+    for mon in mons:
+        print("Detected Pokémon:", mon)
+        print("Type effectiveness:")
+        types = pokemon[mon]
+        effectiveness = calculate_type_effectiveness(types)
+        print(effectiveness)
     print("Press 'q' to capture another screenshot, or 'esc' to exit.")
 
 def calculate_type_effectiveness(pokemon_types):
@@ -60,13 +65,13 @@ def calculate_type_effectiveness(pokemon_types):
         relations = type_damage_relations_map.get(defensive_type, {})
 
         for atk_type in relations.get("double_damage_from", []):
-            add_multiplier(atk_type["name"], 2)
+            add_multiplier(atk_type, 2)
 
         for atk_type in relations.get("no_damage_from", []):
-            add_multiplier(atk_type["name"], 0)
+            add_multiplier(atk_type, 0)
 
         for atk_type in relations.get("half_damage_from", []):
-            add_multiplier(atk_type["name"], 0.5)
+            add_multiplier(atk_type, 0.5)
 
     return effectiveness
 
