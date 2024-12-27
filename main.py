@@ -1,41 +1,14 @@
 import pygetwindow as gw
 import pyautogui
 import keyboard
-import cv2
 import easyocr
 import numpy as np
+import cv2
 import json
 import os
 from collections import defaultdict
 
-from PyQt5.QtWidgets import QApplication, QLabel, QWidget
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QFont, QColor, QPalette
-
 reader = easyocr.Reader(['en'], gpu=True)
-
-class Overlay(QWidget):
-    def __init__(self):
-        super().__init__()
-
-        self.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.FramelessWindowHint)
-        self.setAttribute(Qt.WA_TranslucentBackground)
-
-        self.label = QLabel(self)
-        self.label.setAlignment(Qt.AlignLeft | Qt.AlignTop)  # Align top-left
-        font = QFont("Arial", 12)  # Adjust font size as needed
-        self.label.setFont(font)
-
-        palette = QPalette()
-        palette.setColor(QPalette.Window, QColor(0, 0, 0, 128))  # 40% black background
-        self.setPalette(palette)
-
-    def resizeEvent(self, event):
-        self.label.setGeometry(10, self.height() * 0.6, self.width() - 20, self.height() * 0.4)  # Adjust margins
-
-    def update_text(self, text):
-        self.label.setText(text)
-
 
 with open('Effective.json', 'r') as f:
     type_damage_relations_map = json.load(f)
@@ -177,7 +150,6 @@ def capture_and_process_screenshot():
             player = mons_list
 
         os.system('cls' if os.name == 'nt' else 'clear')
-        print(words)
         print("Opponent: ")
         for mon in opponent:
             print()
