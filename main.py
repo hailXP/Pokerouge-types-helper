@@ -106,7 +106,19 @@ def capture_and_process_screenshot():
         effectiveness = dict(swapped)
         for effective in effectiveness:
             types_effective_colored = [color_text(t.title(), type_colors.get(t.lower(), "")) for t in effectiveness[effective]]
-            print(f"{int(effective) if str(effective).endswith('.0') else effective}x: {', '.join(types_effective_colored)}")
+
+            effectiveness_colors = {
+                0: "\033[30m",
+                0.25: "\033[91m",
+                0.5: "\033[31m",
+                1: "\033[97m",
+                2: "\033[32m",
+                4: "\033[92m",
+            }
+            effective_color_code = effectiveness_colors.get(effective, "")
+            effective_colored = color_text(f"{int(effective) if str(effective).endswith('.0') else effective}x", effective_color_code)
+
+            print(f"{effective_colored}: {', '.join(types_effective_colored)}")
 
     print()
     print("Player: ")
@@ -131,7 +143,19 @@ def capture_and_process_screenshot():
         effectiveness = dict(swapped)
         for effective in effectiveness:
             types_effective_colored = [color_text(t.title(), type_colors.get(t.lower(), "")) for t in effectiveness[effective]]
-            print(f"{int(effective) if str(effective).endswith('.0') else effective}x: {', '.join(types_effective_colored)}")
+
+            effectiveness_colors = {
+                0: "\033[97m",
+                0.25: "\033[91m",
+                0.5: "\033[31m",
+                1: "\033[97m",
+                2: "\033[32m",
+                4: "\033[92m",
+            }
+            effective_color_code = effectiveness_colors.get(effective, "")
+            effective_colored = color_text(f"{int(effective) if str(effective).endswith('.0') else effective}x", effective_color_code)
+
+            print(f"{effective_colored}: {', '.join(types_effective_colored)}")
 
     print("Press 'q' to capture another screenshot, or 'esc' to exit.")
 
